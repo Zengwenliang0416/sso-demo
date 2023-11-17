@@ -1,7 +1,13 @@
 package com.apusic.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.apusic.entity.LoginInfo;
+import com.apusic.entity.Response;
+import com.apusic.entity.Result;
+import com.apusic.service.Validation;
+import com.apusic.utils.RandomRequestIdGenerator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +43,35 @@ public class HelloController {
         return "hello";
     }
 
+    @GetMapping("/")
+    public String apusicPage(HttpSession session, HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies==null){
+            return "redirect:" + ssoServerUrl + "?redirect_url=http://apusic.jd.com:8081/";
+        }
+        for (Cookie cookie:cookies){
+            if (Validation.validation(cookie)){
+                String loginName = cookie.getName();
+                LoginInfo loginInfo = new LoginInfo();
+                Result result = new Result();
+                Response response = new Response();
+                loginInfo.setAdminPin("admin");
+                loginInfo.setLoginUrl("");
+                loginInfo.setLoginName(loginName);
+                loginInfo.setPin("test");
+                loginInfo.setType(2);
+                response.setRequestId(RandomRequestIdGenerator.generateRandomRequestId());
+                result.setLoginInfo(loginInfo);
+                response.setResult(result);
+                return JSON.toJSONString(response, SerializerFeature.WriteMapNullValue);
+            }else {
+
+            }
+        }
+        return "apusic-index";
+    }
+
+
     @GetMapping("/apusic")
     public String apusic(Model model, HttpSession session, @RequestParam(value = "token", required = false) String token) {
         if (!StringUtils.isEmpty(token)) {
@@ -51,7 +88,7 @@ public class HelloController {
             temp.add("zwl");
             temp.add("abc");
             model.addAttribute("temp", temp);
-            return "list";
+            return "apusic-index";
         }
     }
 }

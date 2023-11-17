@@ -1,6 +1,5 @@
 package com.apusic.controller;
 
-import com.sun.net.httpserver.HttpServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -8,9 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.interfaces.PBEKey;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 /**
@@ -36,30 +36,42 @@ public class LoginController {
         return username;
     }
 
+//    @GetMapping("/login.html")
+//    public String loginPage(@RequestParam(value = "redirect_url") String url, Model model, @CookieValue(value = "sso_token", required = false) String sso_token) {
+//        // 判断Cookie中是否保存了令牌
+//        // 有令牌表明之前已经登录过了，直接回到之前的页面并带上令牌信息
+//        if (!StringUtils.isEmpty(sso_token)) {
+//            return "redirect:" + url + "?token=" + sso_token;
+//        }
+//        model.addAttribute("url", url);
+//        return "login";
+//    }
 
-    /**
-     * @param url
-     * @param model
-     * @param sso_token
-     * @return
-     */
-    @GetMapping("/login.html")
-    public String loginPage(@RequestParam("redirect_url") String url, Model model, @CookieValue(value = "sso_token", required = false) String sso_token) {
-        // 判断Cookie中是否保存了令牌
-        // 有令牌表明之前已经登录过了，直接回到之前的页面并带上令牌信息
-        if (!StringUtils.isEmpty(sso_token)) {
-            return "redirect:" + url + "?token=" + sso_token;
-        }
-        model.addAttribute("url", url);
+    @GetMapping("/")
+    public String getLoginPage() {
         return "login";
+    }
+
+    @PostMapping("/login")
+    public String login(String username, String password, HttpSession session, HttpServletResponse response) {
+        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            Cookie cookie = new Cookie(username, uuid);
+            response.addCookie(cookie);
+            session.setAttribute("loginUser", username);
+            return "cloudship-index";
+        } else {
+            // 登录失败，跳转到登录页面
+            return "login";
+        }
     }
 
 
     /**
-     * @param username
-     * @param password
-     * @param url
-     * @param response
+     * @param username 用户名
+     * @param password 密码
+     * @param url      重定向的url地址
+     * @param response HTTP响应
      * @return
      */
     @PostMapping("/doLogin")
