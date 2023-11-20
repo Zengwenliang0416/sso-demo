@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.interfaces.PBEKey;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.UUID;
@@ -51,6 +52,10 @@ public class LoginController {
     public String getLoginPage() {
         return "login";
     }
+    @PostMapping("/post")
+    public String getPost(HttpServletRequest request) {
+        return "login";
+    }
 
     @PostMapping("/login")
     public String login(String username, String password, HttpSession session, HttpServletResponse response) {
@@ -64,6 +69,17 @@ public class LoginController {
             // 登录失败，跳转到登录页面
             return "login";
         }
+    }
+
+    @GetMapping("/check")
+    public String checkLoginStatus(@RequestParam(value = "redirect_url") String url, Model model, HttpServletRequest request) {
+        // 判断Cookie中是否保存了令牌
+        // 有令牌表明之前已经登录过了，直接回到之前的页面并带上令牌信息
+        if (!StringUtils.isEmpty(request.getCookies())) {
+            return "redirect:" + url + "?token=" + request.getCookies();
+        }
+        model.addAttribute("url", url);
+        return "login";
     }
 
 

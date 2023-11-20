@@ -12,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
@@ -43,14 +41,11 @@ public class HelloController {
         return "hello";
     }
 
-    @GetMapping("/")
+    @GetMapping ("/")
     public String apusicPage(HttpSession session, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies==null){
-            return "redirect:" + ssoServerUrl + "?redirect_url=http://apusic.jd.com:8081/";
-        }
         for (Cookie cookie:cookies){
-            if (Validation.validation(cookie)){
+            if (Validation.validation(cookie)!=null){
                 String loginName = cookie.getName();
                 LoginInfo loginInfo = new LoginInfo();
                 Result result = new Result();
@@ -65,7 +60,8 @@ public class HelloController {
                 response.setResult(result);
                 return JSON.toJSONString(response, SerializerFeature.WriteMapNullValue);
             }else {
-
+//                return "redirect:" + ssoServerUrl + "?redirect_url=http://apusic.jd.com:8081/";
+                return "redirect:" + ssoServerUrl;
             }
         }
         return "apusic-index";

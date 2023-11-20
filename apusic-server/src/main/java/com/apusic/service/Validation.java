@@ -12,7 +12,8 @@ import javax.servlet.http.Cookie;
  * @describe TODO
  */
 public class Validation {
-    public static boolean validation(Cookie cookie) {
-        return true;
+    public static String validation(Cookie cookie) {
+        String username = cookie.getName();
+        return username;
     }
 }
