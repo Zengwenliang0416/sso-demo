@@ -1,0 +1,15 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>云舰服务器</title>
+</head>
+<body>
+<!-- 登录信息 -->
+<h1>欢迎[[${session.loginUser}]]来到云舰！</h1>
+<!-- 资源信息 -->
+<form action="/getApusicIndex" method="get">
+  <input type="submit" value="访问金蝶服务器" style="margin-left: 190px">
+</form>
+</body>
+</html>

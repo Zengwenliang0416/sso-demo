@@ -1,14 +1,11 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>云舰服务器首页</title>
+    <title>登录页</title>
 </head>
 <body>
-<!-- 登录信息 -->
-<h1>欢迎[[${session.loginUser}]]来到云舰！</h1>
-<!-- 资源信息 -->
-<form action="/login" method="post">
+<form action="/doLogin" method="post">
     用户名：<input type="text" name="username"><br>
     密&nbsp;&nbsp;&nbsp;码：<input type="password" name="password"><br>
     <!-- 隐藏域用来保存登录成功之后回调的地址 - 即从哪个页面来，就要回到哪个页面去 -->

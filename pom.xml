@@ -15,8 +15,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modules>
-        <module>cloudship-login-server</module>
+        <module>login-server</module>
         <module>apusic-server</module>
+        <module>cloudship-server</module>
     </modules>
 
     <properties>

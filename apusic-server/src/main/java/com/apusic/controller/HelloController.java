@@ -8,18 +8,15 @@ import com.apusic.entity.Result;
 import com.apusic.service.Validation;
 import com.apusic.utils.RandomRequestIdGenerator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author 曾文亮
@@ -35,17 +32,11 @@ public class HelloController {
     @Value("${sso.server.url}")
     private String ssoServerUrl;
 
-    @GetMapping("/hello")
-    @ResponseBody
-    public String hello() {
-        return "hello";
-    }
-
-    @GetMapping ("/")
+    @GetMapping("/")
     public String apusicPage(HttpSession session, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie:cookies){
-            if (Validation.validation(cookie)!=null){
+        for (Cookie cookie : cookies) {
+            if (Validation.validation(cookie) != null) {
                 String loginName = cookie.getName();
                 LoginInfo loginInfo = new LoginInfo();
                 Result result = new Result();
@@ -59,32 +50,24 @@ public class HelloController {
                 result.setLoginInfo(loginInfo);
                 response.setResult(result);
                 return JSON.toJSONString(response, SerializerFeature.WriteMapNullValue);
-            }else {
+            } else {
 //                return "redirect:" + ssoServerUrl + "?redirect_url=http://apusic.jd.com:8081/";
                 return "redirect:" + ssoServerUrl;
             }
         }
-        return "apusic-index";
+        return "index";
     }
 
-
     @GetMapping("/apusic")
-    public String apusic(Model model, HttpSession session, @RequestParam(value = "token", required = false) String token) {
-        if (!StringUtils.isEmpty(token)) {
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> forEntity = restTemplate.getForEntity("http://cloudship.com:8080/userInfo?token=" + token, String.class);
-            String body = forEntity.getBody();
-            session.setAttribute("loginUser", body);
+    public String apusic(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("123")) {
+                session.setAttribute("username",cookie.getName());
+                return "index";
+            }
         }
-        Object loginUser = session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:" + ssoServerUrl + "?redirect_url=http://apusic.com:8081/apusic";
-        } else {
-            List<String> temp = new ArrayList<>();
-            temp.add("zwl");
-            temp.add("abc");
-            model.addAttribute("temp", temp);
-            return "apusic-index";
-        }
+        return "redirect:" + ssoServerUrl + "?redirect_url=http://apusic.jd.com:8081/apusic";
     }
 }

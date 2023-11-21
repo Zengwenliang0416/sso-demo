@@ -13,9 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @describe TODO
  */
 @SpringBootApplication
-public class CloudshipApplication {
+public class LoginApplication {
     public static void main(String[] args) {
-        SpringApplication.run(CloudshipApplication.class,args);
+        SpringApplication.run(LoginApplication.class,args);
     }
 
 }
