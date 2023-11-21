@@ -1,6 +1,7 @@
 package com.apusic.service;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.stereotype.Service;
 
 import javax.security.auth.message.MessageInfo;
 import javax.servlet.http.Cookie;
@@ -16,37 +17,26 @@ import java.net.URL;
  * @author 曾文亮
  * @version 1.0.0
  * @email wenliang_zeng416@163.com
- * @date 2023年11月20日 16:30:08
+ * @date 2023年11月21日 16:36:42
  * @packageName com.apusic.service
- * @className SSO
+ * @className Validation
  * @describe TODO
  */
-public class SSO {
-    /**
-     * 验证请求
-     *
-     * @param messageInfo
-     */
-    public void validateRequest(MessageInfo messageInfo) {
-        HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
-        HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
-        Cookie[] cookies = request.getCookies();
-        cookieValidation(cookies);
-    }
-
+@Service
+public class Validation {
     /**
      * 验证Cookie
      *
      * @param cookies 需要验证的Cookie数组
      */
-    public static void cookieValidation(Cookie[] cookies) {
+    public static void cookieValidation(Cookie[] cookies,HttpServletRequest request, HttpServletResponse response) {
         try {
             // 验证Cookie
             JSONObject loginInfo = validateCookie(cookies);
             if (loginInfo.getInteger("type") == 0) {
                 // 当前用户处于未登录状态，重定向到登陆页面
                 String loginUrl = loginInfo.getString("loginUrl");
-                redirectToLoginPage(loginUrl);
+                redirectToLoginPage(loginUrl,response);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,16 +78,8 @@ public class SSO {
      * @param loginUrl 登录页面URL
      * @throws IOException 如果重定向失败则抛出异常
      */
-    public static void redirectToLoginPage(String loginUrl) throws IOException {
-        if (loginUrl != null) {
-            // 执行重定向
-            URL redirect = new URL(loginUrl); // 创建一个URL对象，传入重定向地址
-            HttpURLConnection redirectConnection = (HttpURLConnection) redirect.openConnection(); // 打开URL连接
-            redirectConnection.setRequestMethod("GET"); // 设置请求方法为GET
-            redirectConnection.getResponseCode(); // 获取响应码
-        } else {
-            throw new IOException("Failed to redirect to login page."); // 如果没有重定向地址，则抛出IOException异常
-        }
+    public static void redirectToLoginPage(String loginUrl, HttpServletResponse response) throws IOException {
+        response.sendRedirect(loginUrl);
     }
 
     /**

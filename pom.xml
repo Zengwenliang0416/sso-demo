@@ -18,6 +18,7 @@
         <module>login-server</module>
         <module>apusic-server</module>
         <module>cloudship-server</module>
+        <module>sso-login-demo</module>
     </modules>
 
     <properties>

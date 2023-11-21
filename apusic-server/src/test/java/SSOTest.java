@@ -22,18 +22,6 @@ import java.util.List;
  */
 public class SSOTest {
     private SSO sso;
-
-
-    @Test
-    public void testValidateRequest() throws IOException {
-        HttpServletRequest request = null;
-        List<String> cookies = new ArrayList<>();
-        cookies.add("token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2MDU0NzU3MzYsImV4cCI6MTYwNTQ3NTczNn0.02_27_10_10_10_10_10_10_10_1");
-        cookies.add("damin=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2MDU0NzU3MzYsImV4cCI6MTYwNTQ3NTczNn0.02_27_10_10_10_10_10_10_10_1");
-        cookies.add("root=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2MDU0NzU3MzYsImV4cCI6MTYwNTQ3NTczNn0.02_27_10_10_10_10_10_10_10_1");
-        request.setAttribute("Cookie", cookies);
-    }
-
     @Test
     public void testValidateRequest_validCookie() throws IOException {
         List<String> cookies = new ArrayList<>();
@@ -59,5 +47,9 @@ public class SSOTest {
         }
         int a = responseCode;
     }
-
+    @Test
+    public void testRedirectToLoginPage() throws IOException {
+        String loginUrl = "http://localhost:8081/getPage";
+        SSO.redirectToLoginPage(loginUrl);
+    }
 }

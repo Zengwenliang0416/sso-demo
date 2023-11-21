@@ -25,6 +25,11 @@ import java.util.UUID;
  */
 @Controller
 public class LoginController {
+
+    @GetMapping("/getPage")
+    public String getPage() {
+        return "page";
+    }
     /**
      * @param url
      * @param model
